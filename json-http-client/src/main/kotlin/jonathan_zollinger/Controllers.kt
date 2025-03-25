@@ -51,6 +51,7 @@ open class OrderController(private val orderRepository: OrderRepository){
     @Suppress("unused")
     fun getOrder(id:Long): HttpResponse<Order> {
         val orderOptional = orderRepository.findById(id)
+        println(orderRepository)
         return if (orderOptional.isPresent) {
             HttpResponse.ok(orderOptional.get())
         } else {
