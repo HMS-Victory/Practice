@@ -1,0 +1,11 @@
+This project is easy to set up once you have installed docker desktop which can be easily done with `winget install Docker.DockerDesktop`
+And then install dbeaver with `winget install dbeaver.dbeaver`.
+
+if you have those installed it is easy, just open the shared-resources/src folder using terminal.
+and run `docker-compose up -d` to create a docker container for the project. This way we do not need
+to manually install all kinds of packages every time.
+
+Then navigate to the project root directory inside terminal and run `./gradlew :json-http-client:test` just to check that everything is working properly
+then run `.\gradlew run --warning-mode all` to run the app conventionally.
+
+You can access the db using dbeaver, open it up
