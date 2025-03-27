@@ -93,5 +93,52 @@ class ProductControllerSpec extends Specification {
             assert e.status == expectedStatus
         }
     }
+}
 
+
+@MicronautTest
+@Property(name = "datasources.default.driver-class-name",
+        value = "org.testcontainers.jdbc.ContainerDatabaseDriver")
+@Property(name = "datasources.default.url",
+        value = "jdbc:tc:postgresql:15.2-alpine:///db?TC_INITSCRIPT=sql/northwind.sql")
+@Property(name = "datasources.default.username",
+        value = "dummyText")
+@Property(name = "datasources.default.password",
+        value = "alsoDummyText")
+class OrderControllerSpec extends Specification{
+
+    @Inject
+    @Client("/order")
+    HttpClient client
+
+    @Shared
+    Sql sql
+
+    void setupSpec() {
+        sql = Sql.newInstance("jdbc:tc:postgresql:15.2-alpine:///db?TC_INITSCRIPT=sql/northwind.sql")
+    }
+
+    void cleanupSpec() {
+        sql?.close()
+    }
+
+    @Unroll
+    void "Orders controller queries order by id with accurate results"(){
+        expect: "ID: #order_id, Customer Id: #customer_id"
+        testGetOrderById(order_id as long, HttpStatus.OK, customer_id as String)
+
+        where:
+        [order_id, customer_id] << sql.rows('select order_id, customer_id from orders')
+    }
+    private void testGetOrderById(Long id, HttpStatus expectedStatus, String expectedCustomerId){
+        try{
+            HttpResponse<Order> response=client.toBlocking().exchange("/${id}", Order)
+            assert response.status()==expectedStatus
+            if(expectedStatus==HttpStatus.OK){
+                assert response.body().customerId==expectedCustomerId
+            }
+        }catch(HttpClientResponseException e){
+            assert e.status==expectedStatus
+        }
+    }
 }

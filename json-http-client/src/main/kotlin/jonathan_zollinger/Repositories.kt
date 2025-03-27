@@ -10,3 +10,10 @@ import jakarta.validation.constraints.NotBlank
 abstract class ProductRepository : PageableRepository<Product, Long> {
     abstract fun findByProductName(@NotBlank productName: String) : Product?
 }
+
+@Suppress("kotlin:S6526")
+@JdbcRepository(dialect = Dialect.POSTGRES)
+abstract class OrderRepository : PageableRepository<Order, Long>{
+//    abstract fun findOrderById(@NotBlank orderId:Long): Order?
+//    there is no reason to add a find by name for an order because they don't have a name, only ids
+}

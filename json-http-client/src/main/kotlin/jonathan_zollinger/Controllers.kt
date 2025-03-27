@@ -9,6 +9,8 @@ import io.micronaut.http.annotation.QueryValue
 import java.net.URLDecoder
 import java.nio.charset.StandardCharsets
 
+
+
 @Suppress("unused")
 @Controller("/product")
 open class ProductController(private val productRepository: ProductRepository) {
@@ -18,6 +20,7 @@ open class ProductController(private val productRepository: ProductRepository) {
     @Suppress("unused")
     fun getProduct(id:Long): HttpResponse<Product> {
         val productOptional = productRepository.findById(id)
+        println(productRepository)
         return if (productOptional.isPresent) {
             HttpResponse.ok(productOptional.get())
         } else {
@@ -33,6 +36,24 @@ open class ProductController(private val productRepository: ProductRepository) {
         val product = productRepository.findByProductName(decodedName)
         return if (null != product) {
             HttpResponse.ok(product)
+        } else {
+            HttpResponse.notFound()
+        }
+    }
+}
+
+@Suppress("unused")
+@Controller("/order")
+open class OrderController(private val orderRepository: OrderRepository){
+
+    @Get("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Suppress("unused")
+    fun getOrder(id:Long): HttpResponse<Order> {
+        val orderOptional = orderRepository.findById(id)
+        println(orderRepository)
+        return if (orderOptional.isPresent) {
+            HttpResponse.ok(orderOptional.get())
         } else {
             HttpResponse.notFound()
         }
